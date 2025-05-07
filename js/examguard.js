@@ -2,7 +2,7 @@ document.addEventListener('contextmenu', function(e) { e.preventDefault(); }, fa
 document.addEventListener('keydown', function(e) {
     var isMac = navigator.platform.toUpperCase().indexOf("MAC") !== -1;
     var ctrlOrCmd = isMac ? e.metaKey : e.ctrlKey;
-    if (ctrlOrCmd && (e.key.toLowerCase() === "c" || e.key.toLowerCase() === "v")) {
+    if (ctrlOrCmd && ["c", "v", "x", "a", "s"].includes(key)) {
         e.preventDefault();
     }
     if (e.key === "F12") {
