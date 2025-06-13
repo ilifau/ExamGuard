@@ -5,10 +5,13 @@ ExamGuard ist ein ILIAS 7 Plugin zum Schutz vor unerlaubten Aktionen während Pr
 - Verhindert Rechtsklick
 - Unterbindet Shortcuts für: Kopieren, Einfügen, Ausschneiden, Markieren und Devtools
 
+- Teststartverzögerung 
+
 ## Einstellungen
 In der Plugin-Konfiguration können folgende Optionen gesetzt werden:
 - **Global aktivieren**: Gilt für das gesamte ILIAS-System.
 - **Ref-IDs einschränken**: Nur für bestimmte Kurse aktivieren.
+- **Startverzögerung aktivieren**: Fügt einen Countdown vor Start des Tests ein (zw. 1 und 10).
 
 ## Installation
 1. Plugin-Verzeichnis in ILIAS hochladen:
