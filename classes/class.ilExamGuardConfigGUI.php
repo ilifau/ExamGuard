@@ -1,8 +1,15 @@
 <?php
-class ilExamGuardConfigGUI extends ilPluginConfigGUI {
-    protected $plugin;
+/**
+ * @ilCtrl_isCalledBy ilExamGuardConfigGUI: ilObjComponentSettingsGUI
+ */
 
-    public function performCommand($cmd) {
+
+class ilExamGuardConfigGUI extends ilPluginConfigGUI
+{
+    protected ilExamGuardPlugin $plugin;
+
+    public function performCommand(string $cmd): void
+    {
         global $ilCtrl, $tpl;
         $this->plugin = $this->getPluginObject();
 
@@ -17,13 +24,15 @@ class ilExamGuardConfigGUI extends ilPluginConfigGUI {
         }
     }
 
-    protected function configure() {
+    protected function configure(): void
+    {
         global $tpl;
         $form = $this->initForm();
         $tpl->setContent($form->getHTML());
     }
 
-    protected function save() {
+    protected function save(): void
+    {
         global $ilCtrl, $tpl;
         $form = $this->initForm();
         if ($form->checkInput()) {
@@ -42,8 +51,10 @@ class ilExamGuardConfigGUI extends ilPluginConfigGUI {
         }
     }
 
-    protected function initForm() {
+    protected function initForm(): ilPropertyFormGUI
+    {
         global $ilCtrl;
+
         $form = new ilPropertyFormGUI();
         $form->setTitle("ExamGuard - Einstellungen");
         $form->setFormAction($ilCtrl->getFormAction($this));
@@ -62,12 +73,13 @@ class ilExamGuardConfigGUI extends ilPluginConfigGUI {
         $ti->setValue($saved_refids);
         $form->addItem($ti);
 
-        $cb_delay = new ilCheckboxInputGUI("Startverzögerung aktivieren?", "start_delay");
+        $cb_delay = new ilCheckboxInputGUI("Startverzögerung aktivieren? - Noch keine Funtion!", "start_delay");
         $cb_delay->setInfo("Aktiviert einen Countdown von 1–10 Sekunden vor dem Teststart.");
         $cb_delay->setChecked($saved_start_delay === "1");
         $form->addItem($cb_delay);
 
         $form->addCommandButton("save", "Speichern");
+
         return $form;
     }
 }

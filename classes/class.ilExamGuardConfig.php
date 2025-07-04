@@ -1,13 +1,21 @@
 <?php
-class ilExamGuardConfig {
-    protected $settings;
-    public function __construct($namespace) {
+
+class ilExamGuardConfig
+{
+    protected ilSetting $settings;
+
+    public function __construct(string $namespace)
+    {
         $this->settings = new ilSetting($namespace);
     }
-    public function get($key, $default = "") {
+
+    public function get(string $key, string $default = ""): string
+    {
         return $this->settings->get($key, $default);
     }
-    public function set($key, $value) {
+
+    public function set(string $key, string $value): void
+    {
         $this->settings->set($key, $value);
     }
 }

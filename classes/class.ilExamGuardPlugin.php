@@ -2,19 +2,19 @@
 
 class ilExamGuardPlugin extends ilUserInterfaceHookPlugin
 {
-    protected $config;
+    protected ?ilExamGuardConfig $config = null;
 
-    public function getPluginName()
+    public function getPluginName(): string
     {
         return "ExamGuard";
     }
 
-    public function hasConfiguration()
+    public function hasConfiguration(): bool
     {
         return true;
     }
 
-    public function getConfig()
+    public function getConfig(): ilExamGuardConfig
     {
         if (!$this->config) {
             require_once __DIR__ . "/class.ilExamGuardConfig.php";
@@ -23,7 +23,7 @@ class ilExamGuardPlugin extends ilUserInterfaceHookPlugin
         return $this->config;
     }
 
-    public function modifyGUI($a_comp, $a_part, $a_par = array())
+    public function modifyGUI(string $a_comp, string $a_part, array $a_par = []): void
     {
         global $tpl;
 
@@ -50,12 +50,12 @@ class ilExamGuardPlugin extends ilUserInterfaceHookPlugin
         }
     }
 
-    private function getJsPath()
+    private function getJsPath(): string
     {
         return "./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/ExamGuard/js/examguard.js";
     }
 
-    private function getPreTestJsPath()
+    private function getPreTestJsPath(): string
     {
         return "./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/ExamGuard/js/examguard_pretest.js";
     }
