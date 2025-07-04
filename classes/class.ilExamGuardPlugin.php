@@ -25,14 +25,23 @@ class ilExamGuardPlugin extends ilUserInterfaceHookPlugin
 
     public function modifyGUI(string $a_comp, string $a_part, array $a_par = []): void
     {
-        global $tpl;
+        $DIC = $GLOBALS['DIC'] ?? null;
+        if (!$DIC) {
+            return;
+        }
 
+        // Verfügbarkeitsprüfung für Template (headless contexts vermeiden)
+        if (!$DIC->offsetExists('tpl') || !$DIC['tpl'] instanceof ilGlobalTemplateInterface) {
+            return;
+        }
+
+        $tpl = $DIC['tpl'];
         $cmd = $_GET["cmd"] ?? "";
         $refid_list = $this->getConfig()->get("refid_list");
         $refid_array = array_filter(array_map("trim", explode(",", $refid_list)));
         $current_ref_id = (int) ($_GET["ref_id"] ?? 0);
 
-        // ⏳ Verzögerung aktivieren auf "infoScreen", wenn eingestellt und ref_id passt
+        // Startverzögerung aktivieren
         if (
             $cmd === "infoScreen" &&
             $this->getConfig()->get("start_delay") === "1" &&
@@ -41,7 +50,7 @@ class ilExamGuardPlugin extends ilUserInterfaceHookPlugin
             $tpl->addJavaScript($this->getPreTestJsPath());
         }
 
-        // 🧩 Copy&Paste-Block aktivieren während des Tests
+        // Globaler oder selektiver ExamGuard-Block aktivieren
         $global_val = $this->getConfig()->get("global_block");
         $active_id = (int) ($_GET["active_id"] ?? 0);
 

@@ -3,15 +3,16 @@
  * @ilCtrl_isCalledBy ilExamGuardConfigGUI: ilObjComponentSettingsGUI
  */
 
-
 class ilExamGuardConfigGUI extends ilPluginConfigGUI
 {
     protected ilExamGuardPlugin $plugin;
 
     public function performCommand(string $cmd): void
     {
-        global $ilCtrl, $tpl;
         $this->plugin = $this->getPluginObject();
+        global $DIC;
+        $ctrl = $DIC->ctrl();
+        $tpl = $DIC->ui()->mainTemplate();
 
         switch ($cmd) {
             case "configure":
@@ -26,25 +27,24 @@ class ilExamGuardConfigGUI extends ilPluginConfigGUI
 
     protected function configure(): void
     {
-        global $tpl;
+        global $DIC;
+        $tpl = $DIC->ui()->mainTemplate();
         $form = $this->initForm();
         $tpl->setContent($form->getHTML());
     }
 
     protected function save(): void
     {
-        global $ilCtrl, $tpl;
+        global $DIC;
+        $ctrl = $DIC->ctrl();
+        $tpl = $DIC->ui()->mainTemplate();
+
         $form = $this->initForm();
         if ($form->checkInput()) {
-            $global_block = $form->getInput("global_block") ? "1" : "";
-            $refid_list   = $form->getInput("refid_list") ?? "";
-            $start_delay  = $form->getInput("start_delay") ? "1" : "";
-
-            $this->plugin->getConfig()->set("global_block", $global_block);
-            $this->plugin->getConfig()->set("refid_list", trim($refid_list));
-            $this->plugin->getConfig()->set("start_delay", $start_delay);
-
-            $ilCtrl->redirect($this, "configure");
+            $this->plugin->getConfig()->set("global_block", $form->getInput("global_block") ? "1" : "");
+            $this->plugin->getConfig()->set("refid_list", trim($form->getInput("refid_list") ?? ""));
+            $this->plugin->getConfig()->set("start_delay", $form->getInput("start_delay") ? "1" : "");
+            $ctrl->redirect($this, "configure");
         } else {
             $form->setValuesByPost();
             $tpl->setContent($form->getHTML());
@@ -53,15 +53,15 @@ class ilExamGuardConfigGUI extends ilPluginConfigGUI
 
     protected function initForm(): ilPropertyFormGUI
     {
-        global $ilCtrl;
-
+        global $DIC;
+        $ctrl = $DIC->ctrl();
         $form = new ilPropertyFormGUI();
         $form->setTitle("ExamGuard - Einstellungen");
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($ctrl->getFormAction($this));
 
-        $saved_global      = $this->plugin->getConfig()->get("global_block");
-        $saved_refids      = $this->plugin->getConfig()->get("refid_list");
-        $saved_start_delay = $this->plugin->getConfig()->get("start_delay");
+        $saved_global = $this->plugin->getConfig()->get("global_block");
+        $saved_refids = $this->plugin->getConfig()->get("refid_list");
+        $saved_delay  = $this->plugin->getConfig()->get("start_delay");
 
         $cb = new ilCheckboxInputGUI("Global aktivieren?", "global_block");
         $cb->setInfo("Wenn aktiviert, wird Copy&Paste in ganz ILIAS blockiert.");
@@ -73,13 +73,12 @@ class ilExamGuardConfigGUI extends ilPluginConfigGUI
         $ti->setValue($saved_refids);
         $form->addItem($ti);
 
-        $cb_delay = new ilCheckboxInputGUI("Startverzögerung aktivieren? - Noch keine Funtion!", "start_delay");
+        $cb_delay = new ilCheckboxInputGUI("Startverzögerung aktivieren? - Noch ohne funktion", "start_delay");
         $cb_delay->setInfo("Aktiviert einen Countdown von 1–10 Sekunden vor dem Teststart.");
-        $cb_delay->setChecked($saved_start_delay === "1");
+        $cb_delay->setChecked($saved_delay === "1");
         $form->addItem($cb_delay);
 
         $form->addCommandButton("save", "Speichern");
-
         return $form;
     }
 }

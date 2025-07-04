@@ -1,37 +1,44 @@
-/**
- * examguard_pretest.js
- * Verzögert den Start des Tests um 1–10 Sekunden.
- */
-window.addEventListener("load", function () {
-    const button = document.querySelector('input[type="submit"][name="cmd[startPlayer]"][value="Test starten"]');
-    if (!button) return;
+document.addEventListener("DOMContentLoaded", function () {
+    const delaySeconds = 10;
+    const startButton = document.querySelector('button[data-action*="initTest"]');
 
-    button.addEventListener("click", function (e) {
+    if (!startButton) {
+        console.log("❌ Kein Start-Button gefunden.");
+        return;
+    }
+
+    console.log("✅ Start-Button gefunden:", startButton);
+
+    const originalUrl = startButton.getAttribute("data-action");
+
+    // Bestehende Eventlistener vollständig ersetzen
+    const newButton = startButton.cloneNode(true);
+    startButton.parentNode.replaceChild(newButton, startButton);
+
+    newButton.addEventListener("click", function (e) {
         e.preventDefault();
+        console.log("🕒 Button wurde geklickt. Countdown startet.");
 
-        if (button.dataset.delayStarted === "1") return;
-        button.dataset.delayStarted = "1";
+        newButton.disabled = true;
+        newButton.classList.add("disabled");
 
-        const delay = Math.floor(Math.random() * 10) + 1;
-        const originalValue = button.value;
+        const countdownSpan = document.createElement("span");
+        countdownSpan.style.marginLeft = "1em";
+        countdownSpan.style.fontWeight = "bold";
+        newButton.appendChild(countdownSpan);
 
-        let countdown = delay;
-        button.disabled = true;
+        let remaining = delaySeconds;
+        countdownSpan.textContent = `Startet in ${remaining}s...`;
 
         const interval = setInterval(() => {
-            if (countdown <= 0) {
-                clearInterval(interval);
-                button.disabled = false;
-                button.value = originalValue;
+            remaining--;
+            countdownSpan.textContent = `Startet in ${remaining}s...`;
 
-                const form = button.closest("form");
-                if (form) form.submit();
-                else button.click();
-            } else {
-                button.value = `Test startet in ${countdown} Sek...`;
-                countdown--;
+            if (remaining <= 0) {
+                clearInterval(interval);
+                console.log("✅ Weiterleitung zu:", originalUrl);
+                window.location.href = originalUrl;
             }
         }, 1000);
     });
 });
-
