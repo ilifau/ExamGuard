@@ -3,6 +3,8 @@
 class ilExamGuardPlugin extends ilUserInterfaceHookPlugin
 {
     protected ?ilExamGuardConfig $config = null;
+    const CONFIG_KEY_ENABLE_CALCULATOR = 'enable_calculator';
+
 
     public function getPluginName(): string
     {
